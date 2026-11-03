@@ -1,0 +1,9 @@
+Dusty Nook: arrive 0 XP (Lv 1, needs 1) · 2 hits · +28
+Moss Cellar: arrive 28 XP (Lv 2, needs 1) · 3 hits · +42
+Dim Gallery: arrive 70 XP (Lv 3, needs 2) · 3 hits · +66
+Cloak Closet: arrive 136 XP (Lv 4, needs 2) · 4 hits · +88
+Fog Landing: arrive 224 XP (Lv 5, needs 3) · 3 hits · +90
+Storm Stair: arrive 314 XP (Lv 5, needs 4) · 4 hits · +120
+Cinder Hall: arrive 434 XP (Lv 6, needs 5) · 4 hits · +152
+Lantern End: arrive 586 XP (Lv 7, needs 6) · 4 hits · +152
+end 738 XP (Lv 7)

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1366">
+<title>Spellbrew Academy</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+<!-- ===== Top bar (hidden on the gate) ===== -->
+<header id="topbar" hidden>
+  <div class="tb-who">
+    <img id="tb-avatar" class="avatar-sm" alt="Your apprentice">
+    <div>
+      <div id="tb-name" class="tb-name"></div>
+      <div class="tb-sub"><span id="tb-rank"></span> · <span id="tb-level"></span></div>
+    </div>
+  </div>
+  <div class="tb-streak" title="First-try streak">🔥 Streak <b id="tb-streak">0</b></div>
+  <nav class="tb-nav">
+    <button id="nav-gate" class="btn ghost">🏰 Gate</button>
+    <button id="nav-sound" class="btn ghost" aria-pressed="true">🔔 Chimes on</button>
+    <button id="nav-desk" class="btn ghost" hidden>✍️ Spelling desk</button>
+    <button id="nav-dungeon" class="btn ghost">🗝️ Dungeon</button>
+    <button id="nav-book" class="btn gold">📖 Spellbook</button>
+  </nav>
+</header>
+
+<!-- ===== Gate ===== -->
+<section id="gate" class="screen">
+  <div class="gate-left">
+    <div class="portrait-frame big"><img id="gate-portrait" alt="Your apprentice portrait"></div>
+    <div id="gate-choice-label" class="choice-label"></div>
+    <label class="field-label" for="gate-name">What should the tower call you?</label>
+    <input id="gate-name" class="text-input" maxlength="20" autocomplete="off" placeholder="Your apprentice name">
+    <button id="gate-enter" class="btn gold xl">Enter the tower</button>
+    <p class="small muted">No login. Your progress stays on this device.</p>
+  </div>
+  <div class="gate-right">
+    <h1 class="title">Spellbrew Academy</h1>
+    <p class="lede">Spell words to brew potions. Brew potions to calm the creatures of the tower dungeon.</p>
+    <div class="card parchment maker">
+      <h2>Make your apprentice</h2>
+      <div class="maker-row"><div class="maker-label">I am a</div>
+        <div class="seg" id="mk-gender">
+          <button data-g="g" class="seg-btn">👧 Girl</button><button data-g="b" class="seg-btn">👦 Boy</button>
+        </div>
+      </div>
+      <div class="maker-label">Hair</div>
+      <div class="row6" id="mk-hair"></div>
+      <div class="maker-label">Face</div>
+      <div class="row6" id="mk-face"></div>
+      <div class="maker-label">Skin tone</div>
+      <div class="row8" id="mk-skin"></div>
+      <div class="maker-label">Or use a photo of you</div>
+      <div class="photo-row">
+        <button id="ph-camera" class="btn copper">📷 Take a photo</button>
+        <button id="ph-file" class="btn copper">🖼️ Choose a picture</button>
+        <button id="ph-back" class="btn ghost" hidden>↩ Use the portraits again</button>
+        <input id="ph-input" type="file" accept="image/*" hidden>
+      </div>
+      <p id="ph-status" class="small muted">Your photo never leaves this device. The tower cuts you out and stands you in front of a torch-lit stone wall.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Camera dialog -->
+<div id="cam" class="overlay" hidden>
+  <div class="card parchment cam-card">
+    <h2>Smile for the tower!</h2>
+    <video id="cam-video" autoplay playsinline muted></video>
+    <div class="row-btns"><button id="cam-snap" class="btn gold xl">📸 Snap</button><button id="cam-cancel" class="btn ghost">Cancel</button></div>
+  </div>
+</div>
+
+<!-- ===== Spelling desk ===== -->
+<section id="desk" class="screen" hidden>
+  <div class="desk-left card parchment">
+    <div class="desk-head">
+      <div class="tier-pill" id="desk-tier"></div>
+      <div class="pattern-pill" id="desk-pattern"></div>
+      <div id="desk-review" class="review-pill" hidden>Review word</div>
+    </div>
+    <div class="word-zone">
+      <div id="word-slots" class="word-slots"></div>
+      <div class="say-row">
+        <button id="say-word" class="btn copper">🔊 Say the word</button>
+        <button id="say-slow" class="btn copper">🐢 Slower</button>
+        <button id="say-sentence" class="btn copper">💬 In a sentence</button>
+      </div>
+      <div id="letter-count" class="letter-count"></div>
+      <div id="apos-note" class="apos-note" hidden>✏️ This word is a contraction. It needs an apostrophe ( ' ) where letters were left out.</div>
+      <div class="def"><b>Meaning:</b> <span id="w-def"></span></div>
+      <div class="sent"><b>Sentence:</b> <span id="w-sent"></span></div>
+    </div>
+    <div id="study" class="study" hidden>
+      <div class="study-word" id="study-word"></div>
+      <div class="study-syl">Syllables: <b id="study-syl"></b></div>
+      <div class="study-hint" id="study-hint"></div>
+      <button id="study-cover" class="btn gold">🙈 Cover the word</button>
+      <button id="study-look" class="btn ghost" hidden>👀 Look again</button>
+    </div>
+    <div class="type-zone">
+      <label for="spell-input" class="field-label" id="type-label">Type the word</label>
+      <div class="type-row">
+        <input id="spell-input" class="text-input spell" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button id="check-btn" class="btn gold xl">✨ Check spelling</button>
+        <span class="enter-hint">or press <kbd>Enter</kbd></span>
+      </div>
+      <div id="live-tiles" class="tiles"></div>
+      <div id="tile-history" class="tile-history"></div>
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="desk-right card parchment">
+    <h2 id="recipe-title"></h2>
+    <p id="recipe-blurb" class="recipe-blurb"></p>
+    <div class="cauldron-wrap"><div id="cauldron"></div></div>
+    <ol id="recipe-slots" class="recipe-slots"></ol>
+    <div class="belt-mini"><div class="maker-label">Potion belt</div><div id="desk-belt" class="belt-row"></div></div>
+  </div>
+</section>
+
+<!-- Brew moment -->
+<div id="brew" class="overlay brew" hidden>
+  <div class="brew-card">
+    <div class="brew-rays"></div>
+    <div id="brew-bottle" class="brew-bottle"></div>
+    <div id="brew-name" class="brew-name"></div>
+    <div id="brew-sub" class="brew-sub"></div>
+    <button id="brew-ok" class="btn gold xl">Add to my belt</button>
+  </div>
+</div>
+
+<!-- ===== Dungeon ===== -->
+<section id="dungeon" class="screen" hidden>
+  <div class="dg-left">
+    <div class="dg-title"><h2>The Tower Dungeon</h2><span class="small muted">Press Esc to go back to spelling</span></div>
+    <div id="map" class="map"></div>
+  </div>
+  <div class="dg-right card parchment" id="room-panel"></div>
+</section>
+
+<!-- ===== Battle ===== -->
+<section id="battle" class="screen" hidden>
+  <div id="stage" class="stage">
+    <div class="stage-bg" id="stage-bg"></div>
+    <div class="hpbar"><div class="hp-name" id="b-name"></div><div class="hp-track"><div class="hp-ghost" id="hp-ghost"></div><div class="hp-fill" id="hp-fill"></div></div><div class="hp-num" id="hp-num"></div></div>
+    <img id="b-monster" class="b-monster" alt="">
+    <div class="b-shadow"></div>
+    <img id="b-hero" class="b-hero" alt="You">
+    <div id="b-fx" class="b-fx"></div>
+    <div id="b-msg" class="b-msg" aria-live="polite"></div>
+  </div>
+  <div class="battle-side card parchment">
+    <div class="lvl-box">
+      <div class="lvl-top"><span id="b-level"></span><span id="b-xprank"></span></div>
+      <div class="xp-track"><div id="xp-fill" class="xp-fill"></div></div>
+      <div class="small" id="xp-text"></div>
+    </div>
+    <div class="maker-label">Your potion belt — pick one to throw</div>
+    <div id="b-belt" class="b-belt"></div>
+    <button id="b-leave" class="btn ghost">↩ Back to the map (Esc)</button>
+  </div>
+</section>
+
+<!-- Level up -->
+<div id="levelup" class="overlay" hidden>
+  <div class="levelup-card"><div class="lu-burst"></div><div class="lu-title">LEVEL UP!</div><div id="lu-rank" class="lu-rank"></div><div id="lu-sub" class="lu-sub"></div><button id="lu-ok" class="btn gold xl">Hooray!</button></div>
+</div>
+
+<!-- ===== Spellbook ===== -->
+<div id="book" class="overlay" hidden>
+  <div class="book card parchment" role="dialog" aria-label="Spellbook">
+    <div class="book-head"><h2>📖 Spellbook</h2><button id="book-close" class="btn ghost">Close (Esc)</button></div>
+    <div id="book-stats" class="book-stats"></div>
+    <div class="book-cols">
+      <div><h3>Mastered words <span id="mastered-n" class="muted"></span></h3><div id="mastered" class="chips"></div></div>
+      <div><h3>Review words <span class="muted small">— click one to practice it</span></h3><div id="review" class="chips"></div></div>
+      <div class="book-settings">
+        <h3>Settings</h3>
+        <label class="switch"><input type="checkbox" id="set-sound"><span>Chimes and sounds</span></label>
+        <label class="switch"><input type="checkbox" id="set-count"><span>Show the letter count</span></label>
+        <button id="book-apprentice" class="btn copper">🎨 Change my apprentice</button>
+        <button id="book-reset" class="btn danger">Start over</button>
+        <p class="small muted">Start over keeps your portrait, photo, name, and settings, but clears potions, words, and dungeon progress.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="confirm" class="overlay" hidden>
+  <div class="card parchment confirm-card"><h2>Start over?</h2><p>This clears your potions, words, and dungeon progress. Your portrait, photo, name, and settings stay.</p>
+    <div class="row-btns"><button id="confirm-yes" class="btn danger">Yes, start over</button><button id="confirm-no" class="btn ghost">Keep my progress</button></div></div>
+</div>
+
+</div>
+<script src="js/words.js"></script>
+<script src="js/data.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/photo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
