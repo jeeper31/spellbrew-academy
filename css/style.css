@@ -100,7 +100,7 @@ kbd{background:#fff6;border:1px solid #0003;border-bottom-width:3px;border-radiu
 .tile{width:46px;height:52px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;text-transform:lowercase;background:#fffaf0;border:3px solid #b98b4a;color:var(--ink)}
 .tile.g{background:#4caf50;border-color:#2f7d32;color:#fff}
 .tile.y{background:#e0a82e;border-color:#a8770f;color:#fff}
-.tile.x{background:#8b8578;border-color:#66615a;color:#fff}
+.tile.x{background:#9aa0a6;border-color:#6b7178;color:#fff}
 .tile.flip{animation:flip .45s both}
 .feedback{margin-top:12px;font-size:22px;font-weight:700;min-height:34px}
 .feedback.good{color:#2f7d32} .feedback.bad{color:#9b3b22}
@@ -274,3 +274,8 @@ body.reduced *,body.reduced *::before,body.reduced *::after{animation-duration:.
 .desk-right.many .recipe-slots{gap:8px}
 .desk-right.many .recipe-slots li{padding:5px 10px;font-size:17px}
 .desk-right.many .recipe-slots li .ic{font-size:24px}
+
+.tile-key{display:flex;gap:16px;margin-top:6px;font-size:14px;font-weight:700;color:#5a4630}
+.tile-key span{display:flex;align-items:center;gap:5px}
+.tile-key .k{width:14px;height:14px;border-radius:4px;display:inline-block}
+.tile-key .k.g{background:#4caf50} .tile-key .k.y{background:#e0a82e} .tile-key .k.x{background:#9aa0a6}

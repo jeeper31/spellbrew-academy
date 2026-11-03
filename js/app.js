@@ -191,7 +191,7 @@ function renderRound(){
   $('letter-count').hidden = !S.showCount;
   $('apos-note').hidden = !w.word.includes("'");
   $('study').hidden = true;
-  $('tile-history').innerHTML = ''; $('live-tiles').innerHTML = '';
+  $('tile-history').innerHTML = ''; $('live-tiles').innerHTML = ''; $('tile-key').hidden = true;
   setFeedback('', '');
   $('type-label').textContent = 'Type the word';
   $('check-btn').textContent = '✨ Check spelling';
@@ -213,11 +213,13 @@ function score(guess, answer){
   g.forEach((ch, i) => { if(res[i] !== 'g' && left[ch]){ res[i] = 'y'; left[ch]--; } });
   return res;
 }
-function tilesHTML(guess, marks){ return `<div class="tile-row">${[...guess].map((ch, i) => `<div class="tile ${marks[i]} flip" style="animation-delay:${i*45}ms">${esc(ch)}</div>`).join('')}</div>`; }
+const MARK_NAME = { g:'right letter, right place', y:'in the word, wrong place', x:'not in the word' };
+function tilesHTML(guess, marks){ return `<div class="tile-row">${[...guess].map((ch, i) => `<div class="tile ${marks[i]} flip" style="animation-delay:${i*45}ms" title="${MARK_NAME[marks[i]]}" aria-label="${esc(ch)}: ${MARK_NAME[marks[i]]}">${esc(ch)}</div>`).join('')}</div>`; }
 function addTiles(guess){
   const marks = score(guess, norm(R.w.word));
   const hist = $('tile-history'); hist.insertAdjacentHTML('beforeend', tilesHTML(guess, marks));
   while(hist.children.length > 3) hist.removeChild(hist.firstChild);
+  $('tile-key').hidden = marks.every(m => m === 'g');
 }
 function startsWith(word){ const n = word.length > 5 ? 2 : 1; return word.slice(0, n); }
 
@@ -262,7 +264,8 @@ function check(){
     $('study-look').hidden = false; inp.select(); save(); refreshTop(); return;
   }
   R.misses++;
-  if(R.misses === 1) setFeedback(`Not quite. Hint: ${R.w.hint}`, 'bad');
+  // Miss 1: tiles only. Miss 2: tiles + hint + first letters. Miss 3: show the word (study).
+  if(R.misses === 1) setFeedback('Not quite. Check your tiles and try again.', 'bad');
   else if(R.misses === 2) setFeedback(`Hint: ${R.w.hint} And it starts with "${startsWith(R.w.word)}…"`, 'bad');
   else { openStudy(); }
   inp.select(); save(); refreshTop();

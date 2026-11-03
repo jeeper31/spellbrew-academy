@@ -84,20 +84,30 @@ const tests = {
     ok(await p.evaluate(() => __sb.state.words["don't"].mastered === true), 'two first tries master the word');
     ok((await p.textContent('#feedback')).includes('MASTERED'), 'mastered message');
   },
-  async 'spelling: misses, hints, starts-with, study, cover, look again, review'(b){
+  async 'spelling: miss 1 tiles only, miss 2 hint + starts-with, miss 3 study, cover, look again, review'(b){
     const p = await fresh(b); await enter(p);
     await p.evaluate(() => __sb.startRound('friend')); await p.waitForTimeout(50);
-    await typeAndEnter(p, 'freind');
+    await typeAndEnter(p, 'freand');
     ok(await p.$eval('#spell-input', e => e.classList.contains('shake')), 'box shakes');
-    ok((await p.textContent('#feedback')).startsWith('Not quite. Hint:'), 'first hint');
+    let fb = await p.textContent('#feedback');
+    ok(fb === 'Not quite. Check your tiles and try again.', 'miss 1: tiles only, no hint text: ' + fb);
+    ok(!fb.includes('Hint') && !fb.includes('starts with') && !fb.includes("I before E"), 'miss 1: no hint, no starts-with');
     const marks = await p.$$eval('#tile-history .tile-row:last-child .tile', a => a.map(t => t.className.split(' ')[1]).join(''));
-    ok(marks === 'ggyygg', 'wordle marks ' + marks);
+    ok(marks === 'ggyxgg', 'wordle marks ' + marks);
+    const bg = await p.$$eval('#tile-history .tile', a => a.map(t => getComputedStyle(t).backgroundColor));
+    ok(bg[0] === 'rgb(76, 175, 80)' && bg[2] === 'rgb(224, 168, 46)' && bg[3] === 'rgb(154, 160, 166)', 'green / gold / gray colors ' + bg.join(' '));
+    ok(await p.isVisible('#tile-key'), 'color key shown');
     ok(await p.textContent('#tb-streak') === '0', 'streak reset');
     await p.waitForTimeout(1000);
     await p.screenshot({ path: path.join(SHOTS, 'desk.png') });
     await typeAndEnter(p, 'frend');
-    ok((await p.textContent('#feedback')).includes('it starts with "f'), 'starts-with hint');
+    ok(await p.$eval('#spell-input', e => e.classList.contains('shake')), 'box shakes on miss 2');
+    fb = await p.textContent('#feedback');
+    ok(fb.startsWith('Hint: ') && fb.includes(await p.evaluate(() => __sb.round.w.hint)) && fb.includes('it starts with "f'), 'miss 2: hint + starts-with');
+    ok(await p.$$eval('#tile-history .tile-row', a => a.length) === 2, 'miss 2: tiles too');
+    ok(!(await p.isVisible('#study')), 'word not shown yet');
     await typeAndEnter(p, 'frennd');
+    ok(await p.$$eval('#tile-history .tile-row', a => a.length) === 3, 'miss 3: tiles too');
     ok(await p.isVisible('#study'), 'study step after 3 misses');
     ok(await p.textContent('#study-word') === 'friend' && (await p.textContent('#study-syl')) === 'friend', 'study word + syllables');
     ok(await p.isDisabled('#spell-input'), 'input locked while studying');
